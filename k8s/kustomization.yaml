@@ -10,4 +10,4 @@ resources:
 images:
   - name: chatbot-image
     newName: ghcr.io/anjaneyavamsikrishna/website-knowledge-chatbot
-    digest: sha256:d34aca658e358a8273aef08715ee5cc91ce26de0a5f7ccd18dcad92c0e0a57dc
+    digest: sha256:3159252d7ec57704bd7589674baa7f4e09b27fc66e15ee6b5730ce439864be1a
