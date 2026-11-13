@@ -10,4 +10,4 @@ resources:
 images:
   - name: chatbot-image
     newName: ghcr.io/anjaneyavamsikrishna/website-knowledge-chatbot
-    newTag: bootstrap-requires-ci
+    digest: sha256:d34aca658e358a8273aef08715ee5cc91ce26de0a5f7ccd18dcad92c0e0a57dc
