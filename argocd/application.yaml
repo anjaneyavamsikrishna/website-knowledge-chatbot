@@ -7,7 +7,7 @@ spec:
   project: website-knowledge-chatbot
   source:
     repoURL: https://github.com/anjaneyavamsikrishna/website-knowledge-chatbot.git
-    targetRevision: deploy
+    targetRevision: main
     path: k8s
   destination:
     server: https://kubernetes.default.svc
