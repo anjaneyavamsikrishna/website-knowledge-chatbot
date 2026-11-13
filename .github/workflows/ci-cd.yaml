@@ -1,0 +1,86 @@
+name: Test, build and publish for Argo CD
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: chatbot-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - uses: azure/setup-kubectl@v4
+      - name: Render Kubernetes manifests
+        run: kubectl kustomize k8s > /tmp/chatbot-rendered.yaml
+  image:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Image name
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        id: build
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.image.outputs.name }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Publish immutable image digest to deployment branch
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+          DIGEST: ${{ steps.build.outputs.digest }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_sha="$GITHUB_SHA"
+          mkdir -p "$RUNNER_TEMP/chatbot-manifests"
+          cp -a k8s "$RUNNER_TEMP/chatbot-manifests/"
+          python - <<'PYTHON'
+          import os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'chatbot-manifests/k8s/kustomization.yaml'
+          lines = p.read_text().splitlines()
+          lines = [('    newName: ' + os.environ['IMAGE']) if line.strip().startswith('newName:') else
+                   ('    digest: ' + os.environ['DIGEST']) if line.strip().startswith('newTag:') else line
+                   for line in lines]
+          p.write_text('\n'.join(lines) + '\n')
+          PYTHON
+          if git fetch origin deploy; then
+            git switch -C deploy FETCH_HEAD
+          else
+            git switch --orphan deploy
+          fi
+          git rm -rf .
+          cp -a "$RUNNER_TEMP/chatbot-manifests/k8s" .
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add k8s
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Deploy ${source_sha}"
+          git push origin HEAD:deploy
