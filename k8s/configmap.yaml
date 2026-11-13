@@ -6,9 +6,17 @@ data:
   DATA_DIR: /app/data
   PORT: "8000"
   LLM_PROVIDER: openai
-  LLM_MODEL: gpt-4o-mini
+  LLM_MODEL: gemini-3.5-flash-lite
+  LLM_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
   EMBEDDING_PROVIDER: openai
-  EMBEDDING_MODEL: text-embedding-3-small
+  EMBEDDING_MODEL: gemini-embedding-001
+  EMBEDDING_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
+  SIMILARITY_THRESHOLD: "0.561"
+  RETRIEVAL_TOP_K: "5"
+  CONTACT_URL: https://www.placidway.com/
+  CRAWLER_USER_AGENT: https://github.com/anjaneyavamsikrishna/placidway-chatbot
+  REQUEST_DELAY_S: "1.0"
+  RATE_LIMIT_PER_MINUTE: "20"
   AUTO_INGEST_ON_STARTUP: "false"
   LOG_LEVEL: INFO
   ANONYMIZED_TELEMETRY: "false"
