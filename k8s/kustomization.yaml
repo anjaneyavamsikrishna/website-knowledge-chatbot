@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: website-knowledge-chatbot
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+images:
+  - name: chatbot-image
+    newName: ghcr.io/anjaneyavamsikrishna/website-knowledge-chatbot
+    digest: sha256:590548beb5e0c7674f1eafb46d9448208ccaba88dfd5a2a1513f82330928eac4
