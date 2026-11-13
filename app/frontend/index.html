@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlacidWay Assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <h1>PlacidWay Assistant</h1>
+        <p class="sub">Answers come only from approved PlacidWay pages, with sources.</p>
+      </div>
+      <button id="clear-btn" class="ghost" type="button">Clear conversation</button>
+    </header>
+
+    <main id="messages" class="messages" role="log" aria-live="polite" aria-label="Conversation"></main>
+
+    <form id="chat-form" class="composer" autocomplete="off">
+      <label for="question" class="sr-only">Your question</label>
+      <textarea id="question" rows="1" maxlength="1000" placeholder="Ask about treatments, packages, clinics or prices..." required></textarea>
+      <button id="send-btn" type="submit">Send</button>
+    </form>
+    <p class="footnote">General information from PlacidWay pages, not medical advice.</p>
+  </div>
+  <script src="/static/script.js"></script>
+</body>
+</html>

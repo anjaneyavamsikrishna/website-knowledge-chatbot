@@ -1,0 +1,11 @@
+# Versions below are the ones the automated test-suite was run against.
+fastapi==0.162.4
+uvicorn[standard]==0.54.0
+pydantic==2.14.3
+pydantic-settings==2.16.2
+requests==2.34.2
+beautifulsoup4==4.15.0
+chromadb==1.5.9
+openai==3.49.0
+# Optional: only if LLM_PROVIDER=anthropic
+# anthropic

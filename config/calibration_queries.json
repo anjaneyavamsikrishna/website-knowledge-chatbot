@@ -1,0 +1,26 @@
+{
+  "in_scope": [
+    "How much does the adrenal cancer treatment cost?",
+    "What is included in the Alternative Adrenal Cancer Treatment package?",
+    "What is on the ITC Immunity Therapy Center price list?",
+    "Tell me about the ITC Immunity Therapy Center",
+    "Where is the clinic located?",
+    "How long is the anal cancer treatment package?",
+    "What does the adenocarcinoma package include?",
+    "Are there videos of the clinic?",
+    "Compare alternative medicine prices abroad",
+    "What treatments does the clinic offer?",
+    "What is the recovery time after treatment?",
+    "Does the package include accommodation?"
+  ],
+  "out_of_scope": [
+    "What is the weather in Cancun?",
+    "Who won the football world cup?",
+    "Write a Python function to sort a list",
+    "What is the capital of France?",
+    "Give me a recipe for chocolate cake",
+    "What is the price of bitcoin today?",
+    "Tell me a joke",
+    "How do I fix my car engine?"
+  ]
+}

@@ -1,0 +1,22 @@
+# Render Blueprint. Check Render's current plan names/prices before using.
+# A persistent disk requires a paid instance; the free instance has no disk and sleeps when idle
+# (see README "Deployment" for the free-tier workaround and its trade-offs).
+services:
+  - type: web
+    name: placidway-knowledge-chatbot
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    disk:
+      name: chatbot-data
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - { key: LLM_PROVIDER, value: openai }
+      - { key: LLM_MODEL, value: gpt-4o-mini }
+      - { key: EMBEDDING_PROVIDER, value: openai }
+      - { key: EMBEDDING_MODEL, value: text-embedding-3-small }
+      - { key: AUTO_INGEST_ON_STARTUP, value: "true" }
+      - { key: CRAWLER_USER_AGENT, value: "PlacidWayAssessmentBot/1.0 (educational assessment; contact: your-email@example.com)" }
+      - { key: LLM_API_KEY, sync: false }
+      - { key: ADMIN_TOKEN, generateValue: true }
