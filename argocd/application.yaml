@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: website-knowledge-chatbot
+  namespace: argocd
+spec:
+  project: website-knowledge-chatbot
+  source:
+    repoURL: https://github.com/anjaneyavamsikrishna/website-knowledge-chatbot.git
+    targetRevision: deploy
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: website-knowledge-chatbot
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

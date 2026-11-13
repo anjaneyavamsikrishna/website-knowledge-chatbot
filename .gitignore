@@ -9,3 +9,7 @@ data/app.db*
 data/inspect/
 *.egg-info/
 .DS_Store
+
+# Local deployment credentials
+secret.yaml
+secrets.env

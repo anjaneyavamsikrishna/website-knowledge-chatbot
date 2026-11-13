@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chatbot-config
+data:
+  DATA_DIR: /app/data
+  PORT: "8000"
+  LLM_PROVIDER: openai
+  LLM_MODEL: gpt-4o-mini
+  EMBEDDING_PROVIDER: openai
+  EMBEDDING_MODEL: text-embedding-3-small
+  AUTO_INGEST_ON_STARTUP: "false"
+  LOG_LEVEL: INFO
+  ANONYMIZED_TELEMETRY: "false"

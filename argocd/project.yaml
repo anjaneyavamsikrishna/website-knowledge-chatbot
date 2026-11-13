@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: website-knowledge-chatbot
+  namespace: argocd
+spec:
+  description: Website knowledge chatbot
+  sourceRepos:
+    - https://github.com/anjaneyavamsikrishna/website-knowledge-chatbot.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: website-knowledge-chatbot
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: ""
+      kind: ConfigMap
+    - group: ""
+      kind: PersistentVolumeClaim
+    - group: ""
+      kind: Service
+    - group: apps
+      kind: Deployment
+    - group: networking.k8s.io
+      kind: Ingress
