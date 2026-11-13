@@ -76,7 +76,7 @@ jobs:
           else
             git switch --orphan deploy
           fi
-          git rm -rf .
+          git rm -rf --ignore-unmatch .
           cp -a "$RUNNER_TEMP/chatbot-manifests/k8s" .
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
