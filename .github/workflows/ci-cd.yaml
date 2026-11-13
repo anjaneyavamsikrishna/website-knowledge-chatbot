@@ -1,9 +1,14 @@
-name: Test, build and publish for Argo CD
+name: Test, build and deploy from main
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
+    paths-ignore:
+      - docs/**
+      - argocd/**
+      - k8s/kustomization.yaml
+      - .gitignore
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,6 +37,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: docker/setup-buildx-action@v3
       - name: Image name
         id: image
@@ -50,7 +57,7 @@ jobs:
           tags: ${{ steps.image.outputs.name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Publish immutable image digest to deployment branch
+      - name: Update main with the published image digest
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           IMAGE: ${{ steps.image.outputs.name }}
@@ -58,29 +65,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source_sha="$GITHUB_SHA"
-          mkdir -p "$RUNNER_TEMP/chatbot-manifests"
-          cp -a k8s "$RUNNER_TEMP/chatbot-manifests/"
-          python - <<'PYTHON'
-          import os
-          from pathlib import Path
-          p = Path(os.environ['RUNNER_TEMP']) / 'chatbot-manifests/k8s/kustomization.yaml'
-          lines = p.read_text().splitlines()
-          lines = [('    newName: ' + os.environ['IMAGE']) if line.strip().startswith('newName:') else
-                   ('    digest: ' + os.environ['DIGEST']) if line.strip().startswith('newTag:') else line
-                   for line in lines]
-          p.write_text('\n'.join(lines) + '\n')
-          PYTHON
-          if git fetch origin deploy; then
-            git switch -C deploy FETCH_HEAD
-          else
-            git switch --orphan deploy
-          fi
-          git rm -rf --ignore-unmatch .
-          cp -a "$RUNNER_TEMP/chatbot-manifests/k8s" .
+          test -n "$DIGEST"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add k8s
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Deploy ${source_sha}"
-          git push origin HEAD:deploy
+          # Retry a non-force push if main advances while this job publishes.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            # Never publish an older build over newer application/manifests changes.
+            if ! git diff --quiet "$GITHUB_SHA" origin/main -- . ':!docs' ':!argocd' ':!k8s/kustomization.yaml' ':!.gitignore'; then
+              echo "Newer source changes exist on main; their workflow will deploy them."
+              exit 0
+            fi
+            git switch -C main origin/main
+            python - <<'PYTHON'
+          import os, re
+          from pathlib import Path
+          p = Path('k8s/kustomization.yaml')
+          content = p.read_text()
+          # This deployment has exactly one image override.
+          content, names = re.subn(r'^    newName:.*$', '    newName: ' + os.environ['IMAGE'], content, flags=re.M)
+          content, versions = re.subn(r'^    (?:newTag|digest):.*$', '    digest: ' + os.environ['DIGEST'], content, flags=re.M)
+          if names != 1 or versions != 1:
+              raise SystemExit('Expected exactly one Kustomize image override')
+          p.write_text(content)
+          PYTHON
+            git add k8s/kustomization.yaml
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "chore(deploy): pin image for ${GITHUB_SHA} [skip ci]"
+            if git push origin HEAD:main; then exit 0; fi
+          done
+          echo 'Could not update main; check branch rules and workflow write permission.' >&2
+          exit 1
