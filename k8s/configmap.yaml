@@ -24,7 +24,7 @@ RETRIEVAL_TOP_K: "5"
 CRAWLER_USER_AGENT: "https://github.com/anjaneyavamsikrishna/placidway-chatbot"
 REQUEST_DELAY_S: "1.0"
 # Runtime: matches the persistent volume mount
-DATA_DIR: "/app/data"
+DATA_DIR: "./data"
 AUTO_INGEST_ON_STARTUP: "false"
 RATE_LIMIT_PER_MINUTE: "20"
 LOG_LEVEL: "INFO"
