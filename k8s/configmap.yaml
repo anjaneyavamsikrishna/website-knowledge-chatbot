@@ -3,20 +3,45 @@ kind: ConfigMap
 metadata:
   name: chatbot-config
 data:
-  DATA_DIR: /app/data
-  PORT: "8000"
-  LLM_PROVIDER: openai
-  LLM_MODEL: gemini-3.5-flash-lite
-  LLM_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
-  EMBEDDING_PROVIDER: openai
-  EMBEDDING_MODEL: gemini-embedding-001
-  EMBEDDING_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
-  SIMILARITY_THRESHOLD: "0.561"
-  RETRIEVAL_TOP_K: "5"
-  CONTACT_URL: https://www.placidway.com/
-  CRAWLER_USER_AGENT: https://github.com/anjaneyavamsikrishna/placidway-chatbot
-  REQUEST_DELAY_S: "1.0"
-  RATE_LIMIT_PER_MINUTE: "20"
-  AUTO_INGEST_ON_STARTUP: "false"
-  LOG_LEVEL: INFO
-  ANONYMIZED_TELEMETRY: "false"
+
+# Admin
+ADMIN_TOKEN: "nIqGBGCPtGDy-RnE6cXzdtIQ7OkvzSbHuTvgBj4mnuE"
+CONTACT_URL: "https://www.placidway.com/"
+# Gemini through the OpenAI-compatible API
+LLM_PROVIDER: "openai"
+LLM_API_KEY: "AQ.Ab8RN6J25RJ_N2qnsdWweP9_L1xYpRl7nW1HKGbbso96fQD5EA"
+LLM_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+LLM_MODEL: "gemini-3.5-flash-lite"
+# Embeddings: empty key uses LLM_API_KEY
+EMBEDDING_PROVIDER: "openai"
+EMBEDDING_MODEL: "gemini-embedding-001"
+EMBEDDING_API_KEY: ""
+EMBEDDING_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+# Retrieval
+SIMILARITY_THRESHOLD: "0.561"
+RETRIEVAL_TOP_K: "5"
+# Crawler
+CRAWLER_USER_AGENT: "https://github.com/anjaneyavamsikrishna/placidway-chatbot"
+REQUEST_DELAY_S: "1.0"
+# Runtime: matches the persistent volume mount
+DATA_DIR: "/app/data"
+AUTO_INGEST_ON_STARTUP: "false"
+RATE_LIMIT_PER_MINUTE: "20"
+LOG_LEVEL: "INFO"
+  # DATA_DIR: /app/data
+  # PORT: "8000"
+  # LLM_PROVIDER: openai
+  # LLM_MODEL: gemini-3.5-flash-lite
+  # LLM_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
+  # EMBEDDING_PROVIDER: openai
+  # EMBEDDING_MODEL: gemini-embedding-001
+  # EMBEDDING_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai/
+  # SIMILARITY_THRESHOLD: "0.561"
+  # RETRIEVAL_TOP_K: "5"
+  # CONTACT_URL: https://www.placidway.com/
+  # CRAWLER_USER_AGENT: https://github.com/anjaneyavamsikrishna/placidway-chatbot
+  # REQUEST_DELAY_S: "1.0"
+  # RATE_LIMIT_PER_MINUTE: "20"
+  # AUTO_INGEST_ON_STARTUP: "false"
+  # LOG_LEVEL: INFO
+  # ANONYMIZED_TELEMETRY: "false"
