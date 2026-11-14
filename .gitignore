@@ -13,3 +13,10 @@ data/inspect/
 # Local deployment credentials
 secret.yaml
 secrets.env
+
+# Private runtime configuration
+.env.*
+!.env.example
+chatbot.env
+*.pem
+*.key
