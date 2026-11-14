@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: website-knowledge-chatbot
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - chatbot.dbinfo.dpdns.org
+      secretName: chatbot-tls
+  rules:
+    - host: chatbot.dbinfo.dpdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: website-knowledge-chatbot
+                port:
+                  name: http
